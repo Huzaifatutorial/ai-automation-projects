@@ -1,0 +1,265 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -368,
+        -16
+      ],
+      "id": "b111fede-1ebe-4cb2-93bf-5240ff16f47f",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6W0Xp0ElUoF8iMUG",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "order",
+              "description": "When any email come with the text inside include new order it will seprate"
+            },
+            {
+              "category": "inquiry",
+              "description": "If any email include words inquiry or customer is asking any type of question need to seprate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -16
+      ],
+      "id": "7d5083e5-86c3-4e79-9b8c-c65952feca0e",
+      "name": "Text Classifier1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        192
+      ],
+      "id": "cf2e1a10-5741-480c-8090-684776437eac",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlMNusgvOXHPXGUn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=  You are a professional email assistant. Reply to this email in JSON format only, no extra text:\n{\n  \"subject\": \"write subject here\",\n  \"email_body\": \"write full email reply here\"\n}\n\nHere is the email: {{ $json.snippet }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        -112
+      ],
+      "id": "480e68eb-de54-4dbb-b2fc-151519678d7b",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlMNusgvOXHPXGUn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ JSON.parse($json.content.parts[0].text).subject }}",
+        "message": "={{ JSON.parse($json.content.parts[0].text).email_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -112
+      ],
+      "id": "41006bc5-3bbe-4a20-8699-f0df74d70f44",
+      "name": "Create a draft",
+      "webhookId": "68dc9f94-f4d6-4284-b20b-ac8198b08696",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6W0Xp0ElUoF8iMUG",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a professional email assistant. Reply to this customer inquiry email in JSON format only, no extra text:\n{\n  \"subject\": \"write subject here\",\n  \"email_body\": \"write full email reply here\"\n}\n\nHere is the email: {{ $json.snippet }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        80
+      ],
+      "id": "eb9206b9-6715-46d2-83f9-9dad0b7c6d3d",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlMNusgvOXHPXGUn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ JSON.parse($json.candidates[0].content.parts[0].text).subject }}",
+        "message": "={{ JSON.parse($json.candidates[0].content.parts[0].text).email_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        80
+      ],
+      "id": "77ff6e6c-43cf-417d-ac86-6bec8a01f658",
+      "name": "Create a draft1",
+      "webhookId": "1e8105df-a315-4211-a742-406a9126e136",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6W0Xp0ElUoF8iMUG",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Create a draft1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

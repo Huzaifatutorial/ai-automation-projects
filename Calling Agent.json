@@ -1,0 +1,151 @@
+{
+  "name": "Calling Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "42146f72-7413-4629-93de-db4e5b3fa285",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "41d5e612-643e-4d19-819c-f23a50992e13",
+      "name": "Webhook",
+      "webhookId": "42146f72-7413-4629-93de-db4e5b3fa285"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1kq4605T9qx3xfj-GfguHh2Cy9x3Jz9JMzdJq3XAzTyY/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq4605T9qx3xfj-GfguHh2Cy9x3Jz9JMzdJq3XAzTyY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "N/A",
+            "Calling Time": "={{$now}} ",
+            "summary": "= {{$json.body.query}}"
+          },
+          "matchingColumns": [
+            "Mobile Number"
+          ],
+          "schema": [
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Calling Time",
+              "displayName": "Calling Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c2322d04-cdff-4ce3-b1a5-ab6398420565",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "w3Xf597ycLX3iiv3",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"answer\": \"We are open daily from 9 AM to 10 PM at Karim Market, Allama Iqbal Town, Lahore.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ff859b4f-fc1f-4c5c-b73f-c431eb632a07",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b321afd2-1c2a-4899-b8a6-97707f21009b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cad4f516f6051137622287619988a81913e50e0e2555a8186127f1c7b3e0710e"
+  },
+  "nodeGroups": [],
+  "id": "Mfu82YqDaOZZxeKi",
+  "tags": []
+}

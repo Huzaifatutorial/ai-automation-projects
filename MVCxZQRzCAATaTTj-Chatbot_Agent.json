@@ -1,0 +1,279 @@
+{
+  "name": "Chatbot Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -192,
+        -128
+      ],
+      "id": "53a3492a-b452-41c8-9bf5-150ffda0ccb0",
+      "name": "When chat message received",
+      "webhookId": "13ede773-a82b-4868-9699-a79852f398b5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a friendly and professional customer support assistant for an online learning platform.\n\nRULES YOU MUST FOLLOW:\n\n1. WELCOME MESSAGE: When a customer says \"hi\", \"hello\", \"salam\", \"hey\" or any greeting, always respond with a warm welcome message. Example: \"Welcome! 😊 I'm your virtual assistant. How can I help you today?\"\n\n2. ALWAYS BE POLITE: Always use polite, respectful, and friendly language. Never be rude or dismissive.\n\n3. LANGUAGE: Always reply in the same language the customer is using. If they write in Urdu, reply in Urdu. If Hindi, reply in Hindi. If Spanish, reply in Spanish. If French, reply in French. If English, reply in English.\n\n4. UNKNOWN QUESTIONS: If a customer asks something that is NOT in your knowledge base or tools, do NOT make up an answer. Instead say:\n\"I'm sorry, I don't have information on that right now. Could you please share your phone number so our team can get back to you personally?\"\nThen save their question and phone number to the Unanswered Queries sheet using the available tool.\n\n5. ANSWER FROM DATA: Always use the available Google Sheets tools to get course information and FAQ answers before responding."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        112,
+        -128
+      ],
+      "id": "442accfa-549a-400f-ab9e-fb47667d20cb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        96
+      ],
+      "id": "7b88acf2-0b7c-429e-92f4-216a015dbef6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlMNusgvOXHPXGUn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -96,
+        96
+      ],
+      "id": "b999dad3-05c5-4468-ac1a-841cb70765ae",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I",
+          "mode": "list",
+          "cachedResultName": "course data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 452399535,
+          "mode": "list",
+          "cachedResultName": "Courses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I/edit#gid=452399535"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        112,
+        96
+      ],
+      "id": "64fdd4f7-398d-40bc-a1c1-e59c31b398e5",
+      "name": "Get course info",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VKDqFVslkayQEBT",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I",
+          "mode": "list",
+          "cachedResultName": "course data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 606906521,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I/edit#gid=606906521"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        96
+      ],
+      "id": "7ece528f-0264-4f74-84bc-adf75852f542",
+      "name": "Get  FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VKDqFVslkayQEBT",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I",
+          "mode": "list",
+          "cachedResultName": "course data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 694069044,
+          "mode": "list",
+          "cachedResultName": "Unanswered Queries",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8_LW6qbUsVaVbroXrHrklvOXIDB5Xe8_10azBF58_I/edit#gid=694069044"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "User Question": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('User_Question', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "User Question",
+              "displayName": "User Question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        112
+      ],
+      "id": "6b1c401a-b616-4894-9c6a-7029dcb39b28",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VKDqFVslkayQEBT",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get course info": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get  FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

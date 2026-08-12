@@ -1,0 +1,358 @@
+{
+  "name": "whatsapp message",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "You are a friendly and professional customer support assistant for our restaurant.\n\nRESTAURANT INFORMATION:\n- Name: [ZAIFI CAFE]\n- Opening Hours: 11:00 AM to 11:00 PM (Monday to Sunday)\n- Location: [Allama iqbal town opposite Gulshan Iqbal Park]\n- Phone: [03010149348]\n- Delivery: Available within 5km radius, 30-45 minutes delivery time\n\nRULES YOU MUST FOLLOW:\n\n1. LANGUAGE: Always reply in the same language the customer is using. If customer writes in Urdu, reply in Urdu. If English, reply in English. If Roman Urdu, reply in Roman Urdu.\n\n2. GREETING: When customer says hi, hello, salam, or any greeting - always welcome them warmly and tell them you can help with orders, menu, and restaurant information.\n\n3. TAKING ORDERS: When customer wants to place an order:\n   - Ask their name\n   - Ask which food item they want\n   - Ask quantity\n   - Confirm the order\n   - Save to Google Sheet using the Orders tool\n   - Tell them estimated delivery time is 30-45 minutes\n\n4. MENU CHECK: Always check inventory from Google Sheet before confirming any order.\n   - If item is available: confirm the order\n   - If item is out of stock: say \"Sorry, this item is currently out of stock\" and suggest similar available items\n   - If item is NOT on our menu at all: say \"Sorry, we do not serve this dish. Here are our available items:\" and list the menu items from inventory sheet\n\n5. FAQ: For questions about timings, delivery, payment methods, or any general question - always check FAQ sheet first and answer accordingly.\n\n6. PAYMENT: We accept Cash, Credit/Debit Cards, and EasyPaisa/JazzCash.\n\n7. UNKNOWN QUESTIONS: If you do not know the answer to any question, politely say you do not have that information right now and ask for their phone number so our team can contact them personally. Save their question and phone number.\n\n8. ALWAYS BE POLITE: Never be rude. Always use friendly and respectful tone."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -480,
+        -304
+      ],
+      "id": "9bc71bc1-2a7a-4cd4-9ac0-f2bfe18017f6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -784,
+        0
+      ],
+      "id": "704fdd5b-7ba2-4ae3-9c1c-495756f13f3a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlMNusgvOXHPXGUn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -592,
+        0
+      ],
+      "id": "57fa8b0f-1d54-45cc-99a0-a60109bbf09e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E",
+          "mode": "list",
+          "cachedResultName": "Food Delievery System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 749711595,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E/edit#gid=749711595"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -432,
+        -48
+      ],
+      "id": "dca9bea5-d345-45c5-9daa-d05323511aab",
+      "name": "Get Inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VKDqFVslkayQEBT",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E",
+          "mode": "list",
+          "cachedResultName": "Food Delievery System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 331256002,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E/edit#gid=331256002"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -288,
+        -16
+      ],
+      "id": "132d264e-6685-4030-9104-51b4cbe64b33",
+      "name": "FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VKDqFVslkayQEBT",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E",
+          "mode": "list",
+          "cachedResultName": "Food Delievery System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 393871987,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u6qbKujEDR6bSLepZg-1rE839mNWqUpCNnCvDabap-E/edit#gid=393871987"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', ``, 'string') }}",
+            "Food Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Food_Item', ``, 'string') }}",
+            "Quantity": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity', ``, 'string') }}",
+            "Order Date": "={{new Date().toLocaleString('en-PK')}}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Food Item",
+              "displayName": "Food Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -112,
+        -16
+      ],
+      "id": "562158cb-de69-426c-a37b-2a2033aae122",
+      "name": "Post order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VKDqFVslkayQEBT",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        -288
+      ],
+      "id": "942a9122-00de-410c-8b7c-3d71cec88c7f",
+      "name": "WhatsApp Trigger",
+      "webhookId": "56dc0e7f-a22c-46f0-89df-ec3361b775e6",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "9LhMl6nk5ciSZaWu",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1163724520162703",
+        "recipientPhoneNumber": "+92 3010149348",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        -288
+      ],
+      "id": "150bff9b-a344-41c0-b013-d832db8673e8",
+      "name": "Send message",
+      "webhookId": "60d05b5c-30ee-4c89-beaf-7dda523a0970",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "picT8bTq5x8SH6gm",
+          "name": "WhatsApp account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Inventory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
